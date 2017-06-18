@@ -3,8 +3,26 @@
  */
 import React, { Component } from 'react';
 import './Cart.css';
+import { observer } from 'mobx-react';
+import * as _ from 'lodash';
 
-class Cart extends Component {
+const Cart = observer(class Cart extends Component {
+  constructor(){
+    super();
+    this.state = {
+      cart : {
+
+      }
+    };
+  }
+  doCalculate = () => {
+    let promotions = this.props.data.getPromotionForGroup(this.state.group);
+    /*todo:
+      for each promotions
+      stop when end of promotion or end of cart item.
+      */
+
+  };
 
   render() {
     return (
@@ -15,6 +33,6 @@ class Cart extends Component {
       </div>
     );
   }
-}
+});
 
 export default Cart;
