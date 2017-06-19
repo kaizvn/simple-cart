@@ -20,10 +20,10 @@ class promotion {
           type: 0,
           quantity: ''
         }],
-        promo: {
+        promo: [{
           type: 0,
           value: ''
-        }
+        }]
       }
     };
 
@@ -73,7 +73,7 @@ class promotion {
           name: 'bonus package 3',
         }
       ];
-    }
+    };
 
     extendObservable(this, {
         promotion: [
@@ -86,38 +86,42 @@ class promotion {
               type: 12,
               quantity: 3
             }],
-            promo: {
+            promo: [{
               type: 3,
               value: 300
-            }
+            }]
           },
           {
             id: 456,
             name: "rule 2",
             isHighPriority: true,
-            group: "Aka",
+            group: "Uni",
             conditions: [{
               type: 23,
               quantity: 5
             }],
-            promo: {
+            promo: [{
               type: 2,
               value: 2
-            }
+            }]
           },
           {
             id: 789,
             name: "rule 3",
-            isHighPriority: false,
-            group: "Eke",
+            isHighPriority: true,
+            group: "Uni",
             conditions: [{
               type: 34,
-              quantity: 5
-            }],
-            promo: {
+              quantity: 7
+            },
+              {
+                type: 23,
+                quantity: 9
+              }],
+            promo: [{
               type: 1,
               value: 10
-            }
+            }]
           }
         ],
 
@@ -130,7 +134,12 @@ class promotion {
           }));
         }),
         getPromotionForGroup: function (group) {
-          return _.filter(this.promotion, (promo) => promo.group === group)
+          //noinspection JSCheckFunctionSignatures
+          return _.orderBy(
+            _.filter(toJS(this.promotion), {group: group}),
+            ['isHighPriority', 'conditions', 'conditions[0]quantity'],
+            ['desc', 'desc', 'desc']
+          )
         }
       }
     );

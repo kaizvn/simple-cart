@@ -16,9 +16,9 @@ const PromotionRule = observer(class PromotionRule extends Component {
     this.doReset();
   }
 
-  doSelectedPromo = (event) => {
-    let id = event ? event.target.value : '';
-    let data = this.props.data.getPromotion(id);
+  doSelectedPromo = (event = null) => {
+    const id = event ? event.target.value : '';
+    const data = this.props.data.getPromotion(id);
 
     this.setState({formData: data});
   };
@@ -30,7 +30,7 @@ const PromotionRule = observer(class PromotionRule extends Component {
   getFormData = () => _.extend({}, this.state.formData);
 
   doUpdateForm = (event) => {
-    let updated = this.props.data.doUpdatePromotion(this.getFormData());
+    const updated = this.props.data.doUpdatePromotion(this.getFormData());
     (!updated) && this.doReset();
     event.preventDefault();
   };
@@ -40,11 +40,12 @@ const PromotionRule = observer(class PromotionRule extends Component {
       <option key={item.id} value={item.id}>{item.name || '---' }</option>)
     );
 
-
   doUpdateField = (event) => {
-    let value = event.target.type === 'checkbox' ? event.target.checked : event.target.value + "";
-    let formData = this.getFormData();
-    let fields = event.target.name.split('.');
+    const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value + "";
+    const formData = this.getFormData();
+    const name = event.target.name;
+
+    const fields = name.split('.');
 
     fields.reduce((curr, next, index) => {
       return (index === fields.length - 1)
@@ -55,56 +56,113 @@ const PromotionRule = observer(class PromotionRule extends Component {
     this.setState({formData});
   };
 
-  doAddPromotion = (event) => {
+  doAddItem = (field, event) => {
     event.preventDefault();
-    let formData = this.state.formData;
-    formData.conditions.push({
+    const formData = this.state.formData;
+    formData[field].push({
       type: 0,
-      quantity: 0
+      quantity: ''
     });
 
     this.setState({formData});
   };
 
-  renderConditions = () => {
-    const {getProducts} = this.props.data;
-    const renderProductOptions = this.doRenderOptions(getProducts());
+  doRemoveItem = (field, event) => {
+    event.preventDefault();
+    const formData = this.state.formData;
+    const index = event.target.name;
+    formData[field].splice(index, 1);
 
-    const promotionElement = this.state.formData.conditions.map((item, index) => (
-      <div key={index} className="form-group">
-        <div className="form-group col-lg-6">
-          <label>Order package</label>
+    this.setState({formData});
+  };
+
+  renderConditions = (conditions) => {
+    const {getProducts} = this.props.data;
+    const options = {
+      itemText: 'Order package',
+      itemName: 'type',
+      valueText: 'Quantity',
+      valueName: 'quantity',
+      field: 'conditions',
+      title: 'Conditions'
+    };
+
+    return this.renderDataField(conditions, getProducts(), options);
+  };
+
+  renderBonuses = (promo) => {
+    const {getPromoTypes} = this.props.data;
+    const options = {
+      itemText: 'Bonus type',
+      itemName: 'type',
+      valueText: 'Value',
+      valueName: 'quantity',
+      field: 'promo',
+      title: 'Bonus'
+    };
+
+    return this.renderDataField(promo, getPromoTypes(), options);
+  };
+
+  renderItemFields = (dataList, optionList, options) => {
+    const optionRender = this.doRenderOptions(optionList);
+
+    return dataList.map((item, index) => (
+      <div key={index}>
+        <div className="form-group col-xs-5 col-md-5">
+          <label>{options.itemText}</label>
           <select className="form-control"
-                  value={item.type} name={`conditions.${index}.type`} onChange={this.doUpdateField.bind(this)}>
-            {renderProductOptions}
+                  value={item.type} name={`${options.field}.${index}.${options.itemName}`}
+                  onChange={this.doUpdateField}
+                  required>
+            {optionRender}
           </select>
         </div>
-        <div className="form-group col-lg-6">
-          <label>Quantity</label>
+        <div className="form-group col-xs-5 col-md-5">
+          <label>{options.valueText}</label>
           <input type="number" className="form-control"
-                 value={item.quantity} name={`conditions.${index}.quantity`} onChange={this.doUpdateField}
+                 value={item.quantity} data={index} name={`${options.field}.${index}.${options.valueName}`}
+                 onChange={this.doUpdateField}
                  required/>
+        </div>
+        <div className="form-group col-xs-2 col-md-2">
+          <button type="button" name={index} className="btn btn-sm btn-default minus-button"
+                  onClick={this.doRemoveItem.bind(this, options.field)}>
+            <i className="glyphicon glyphicon-minus"/>
+          </button>
         </div>
       </div>
     ));
-
-    promotionElement.push(<div key="btn" className="form-group col-lg-12">
-      <button type="button" className="btn btn-sm btn-default pull-right" onClick={this.doAddPromotion}>
-        Add new <i className="glyphicon glyphicon-plus"/>
-      </button>
-    </div>);
-    return promotionElement;
-
   };
 
+  renderAddButton = (field) => {
+    return (
+      <div key="btn" className="form-group col-xs-12">
+        <button type="button" className="btn btn-sm btn-default pull-right" onClick={this.doAddItem.bind(this, field)}>
+          Add new <i className="glyphicon glyphicon-plus"/>
+        </button>
+      </div>
+    );
+  };
+
+  renderDataField = (dataList, optionsList, options) => {
+    const renderItemFields = this.renderItemFields(dataList, optionsList, options);
+    const renderBtnAddPromotion = this.renderAddButton(options.field);
+    return (
+      <div className="form-group col-xs-12 clearfix">
+        <label>{options.title}</label>
+        {renderItemFields}
+        {renderBtnAddPromotion}
+      </div>);
+  };
 
   render() {
-    const {promotionNameList, getPromoTypes} = this.props.data;
+    const {promotionNameList} = this.props.data;
     const formData = this.state.formData;
     const renderOptions = this.doRenderOptions(promotionNameList);
-    const renderPromoTypeOptions = this.doRenderOptions(getPromoTypes());
 
-    const renderConditions = this.renderConditions();
+    const renderConditions = this.renderConditions(formData.conditions);
+    const renderBonuses = this.renderBonuses(formData.promo);
 
     return (
       <div className="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
@@ -112,7 +170,7 @@ const PromotionRule = observer(class PromotionRule extends Component {
           this is rule component {this.props.data.promotion[1].group}
         </p>
         <form onSubmit={this.doUpdateForm}>
-          <div className="form-group col-lg-12">
+          <div className="form-group col-xs-12">
             <label>Select Promotion</label>
             <select className="form-control"
                     onChange={this.doSelectedPromo} value={formData.id}>
@@ -120,37 +178,23 @@ const PromotionRule = observer(class PromotionRule extends Component {
             </select>
           </div>
 
-          <div className="form-group col-lg-12">
+          <div className="form-group col-xs-12">
             <label> Promotion name</label>
             <input type="text" className="form-control"
                    value={formData.name} name="name" onChange={this.doUpdateField} disabled={formData.id}
                    required/>
           </div>
 
-          <div className="form-group col-lg-12">
+          <div className="form-group col-xs-12">
             <label> Apply for group</label>
             <input type="text" className="form-control"
                    value={formData.group} name="group" onChange={this.doUpdateField} required/>
           </div>
-
           {renderConditions}
 
+          {renderBonuses}
 
-          <div className="form-group col-lg-6">
-            <label>Promotion type</label>
-            <select className="form-control"
-                    value={formData.promo.type} name="promo.type" onChange={this.doUpdateField}>
-              {renderPromoTypeOptions}
-            </select>
-          </div>
-
-          <div className="form-group col-lg-6">
-            <label>Value</label>
-            <input type="number" className="form-control"
-                   value={formData.promo.value} name="promo.value" onChange={this.doUpdateField} required/>
-          </div>
-
-          <div className="checkbox col-lg-6">
+          <div className="checkbox col-xs-6 ">
             <label htmlFor="isHighPriority">
               <input type="checkbox" className="checkbox" name="isHighPriority"
                      checked={formData.isHighPriority} onChange={this.doUpdateField}/>
@@ -158,9 +202,9 @@ const PromotionRule = observer(class PromotionRule extends Component {
             </label>
 
           </div>
-          <div className="btn-block col-lg-6">
-            <input type="submit" value="Add new / Update" className="btn btn-info col-lg-5"/>
-            <input type="button" value="Clear" className="btn btn-default col-lg-5 col-lg-offset-2"
+          <div className="btn-block col-xs-12 ">
+            <input type="submit" value="Add new / Update" className="btn btn-info col-xs-5"/>
+            <input type="button" value="Clear" className="btn btn-default col-xs-5 col-xs-offset-2"
                    onClick={this.doReset}/>
           </div>
         </form>

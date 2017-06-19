@@ -4,25 +4,30 @@
 import React, { Component } from 'react';
 import './Cart.css';
 import { observer } from 'mobx-react';
-import * as _ from 'lodash';
+//import * as _ from 'lodash';
 
 const Cart = observer(class Cart extends Component {
-  constructor(){
+  constructor() {
     super();
     this.state = {
-      cart : {
-
-      }
+      cart: {},
+      group: 'Uni'
     };
   }
-  doCalculate = () => {
-    let promotions = this.props.data.getPromotionForGroup(this.state.group);
-    /*todo:
-      for each promotions
-      stop when end of promotion or end of cart item.
-      */
 
-  };
+  componentWillMount() {
+    const promotions = this.props.data.getPromotionForGroup(this.state.group);
+    console.log('promotions', promotions);
+  }
+
+  /*doCalculate = () => {
+    //let promotions = this.props.data.getPromotionForGroup(this.state.group);
+    /!*todo:
+     for each promotions
+     stop when end of promotion or end of cart item.
+     *!/
+
+  };*/
 
   render() {
     return (
