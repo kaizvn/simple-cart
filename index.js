@@ -13,7 +13,7 @@ const data = model();
 
 const app = express();
 
-app.use(express.static(path.resolve(__dirname, '..', 'build')));
+app.use(express.static(path.resolve(__dirname, 'app', 'build')));
 app.use(bodyParser.json());
 
 APIs.forEach(api => {
