@@ -4,24 +4,24 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const model = require('./model');
-const APIs = require('./routes') || [];
+const APIs = require('./api');
 const path = require('path');
 const port = process.env.ENV_PORT || 3000;
-
-const data = model();
+router = express.Router();
 
 const app = express();
 
 app.use(express.static(path.resolve(__dirname, 'app', 'build')));
+
 app.use(bodyParser.json());
 
-APIs.forEach(api => {
-  if (api.params) {
-    api(data);
-    app.use(api)
-  }
+APIs(router);
+
+router.get('/ping', (req, res) => {
+  res.end('pong!');
 });
+
+app.use('/api', router);
 
 app.listen(port, function () {
   console.log('Example app listening on port 3000!')
