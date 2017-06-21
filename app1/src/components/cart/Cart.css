@@ -1,0 +1,17 @@
+.Cart {
+  text-align: center;
+  clear: both;
+  padding-top: 30px;
+  min-height: 500px;
+}
+
+.Cart-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.Cart-intro {
+  font-size: large;
+}
