@@ -14,5 +14,7 @@ module.exports = (router) => {
     .get(controller.getPromotion)
     .post(controller.updatePromotion)
     .put(controller.addPromotion);
+
+  router.get('/promotion-types', controller.getPromotionTypes);
 };
 

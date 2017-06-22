@@ -14,11 +14,11 @@ class PromotionController {
   getPromotion(req, res) {
     const id = +req.params['id'];
     if (id)
-      res.json({
+      res.status(200).json({
         data: _.find(model.promotions, {id: id}) || {}
       });
     else
-      res.json({
+      res.status(200).json({
         data: model.promotions.map((promo) => {
           return {
             name: promo.name,
@@ -26,6 +26,13 @@ class PromotionController {
           }
         })
       });
+  }
+
+  getPromotionTypes(req, res) {
+    return res.status(200).json({
+      status: 200,
+      data: model.promotionTypes
+    })
   }
 
   addPromotion(req, res) {

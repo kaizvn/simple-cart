@@ -13,7 +13,7 @@ const promotions = [
       type: 12,
       quantity: 3
     }],
-    promo: [{
+    promos: [{
       type: 3,
       value: 300
     }]
@@ -27,7 +27,7 @@ const promotions = [
       type: 23,
       quantity: 5
     }],
-    promo: [{
+    promos: [{
       type: 2,
       value: 2
     }]
@@ -45,7 +45,7 @@ const promotions = [
         type: 23,
         quantity: 9
       }],
-    promo: [{
+    promos: [{
       type: 1,
       value: 10
     }]

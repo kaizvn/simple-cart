@@ -10,7 +10,10 @@ class ProductController {
   }
 
   getProducts(req, res) {
-    return res.json(model.productList);
+    return res.status(200).json({
+      status: 200,
+      data: model.productList
+    });
   };
 }
 
