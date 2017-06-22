@@ -5,6 +5,7 @@
     "lodash": "^4.17.4"
   },
   "scripts": {
+    "setup": "yarn && cd app && yarn",
     "fedev": "cd app && yarn start",
     "build": "cd app && yarn build",
     "start": "node index",
