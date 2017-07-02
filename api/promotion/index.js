@@ -12,8 +12,8 @@ const controller = require(__dirname + '/controller');
 module.exports = (router) => {
   router.route('/promotion/:id*?')
     .get(controller.getPromotion)
-    .post(controller.updatePromotion)
-    .put(controller.addPromotion);
+    .post(controller.upsertPromotion)
+    .put(controller.upsertPromotion);
 
   router.get('/promotion-types', controller.getPromotionTypes);
 };

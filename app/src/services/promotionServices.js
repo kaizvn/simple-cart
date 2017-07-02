@@ -5,7 +5,7 @@
 
 import { extendObservable } from 'mobx';
 import fetch from 'isomorphic-fetch';
-const PORT = 3000; // todo: make this one configurable
+const PORT = 3001; // todo: make this one configurable
 
 const API_URL = `http://localhost:${PORT}/api`;
 class StoreService {
@@ -32,12 +32,20 @@ class StoreService {
     return this.doAsync(`/promotion/${id}`);
   };
 
+  upsertPromotion = (data) => {
+    const method = (data.id) ? 'PUT' : 'POST';
+    return this.doAsync(`/promotion/${data.id || ''}`, data, method);
+  };
+
   doAsync = (url, params, method = 'GET') => {
     const body = params ? JSON.stringify(params) : '';
 
     let options = {
       method: method,
       mode: 'cors',
+      headers: {
+        "Content-type": "application/json"
+      }
     };
 
     if (method !== 'GET')

@@ -42,9 +42,11 @@ const PromotionRule = observer(class PromotionRule extends Component {
   getFormData = () => _.extend({}, this.state.formData);
 
   doUpdateForm = (event) => {
-    const updated = this.props.data.doUpdatePromotion(this.getFormData());
-    (!updated) && this.doReset();
     event.preventDefault();
+    this.props.data.doUpdatePromotion(this.getFormData(), (resp) => {
+      (!resp.data.isUpdate) && this.doReset();
+    })
+
   };
 
   doRenderOptions = (dataList) => dataList.map(item =>

@@ -63,17 +63,15 @@ class PromotionStore {
       this[storeName] = resp.data;
   };
 
-  doUpdatePromotion = (data) => {
-    //TODO: refactor this
-    let existedPromotion = {};
-    if (existedPromotion.id) {
-      _.extend(existedPromotion, data);
-      return true;
-    } else {
-      data.id = data.id || Date.now();
-      this.promotions.push(data);
-      return false;
-    }
+  doUpdatePromotion = (data, callback) => {
+    storeService
+      .upsertPromotion(data)
+      .then((resp) => {
+        callback(resp);
+        storeService.fetchPromotions()
+          .then(resp => this.setItemsToStore(resp, 'promotions'));
+      });
+
   }
 }
 

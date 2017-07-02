@@ -35,12 +35,26 @@ class PromotionController {
     })
   }
 
-  addPromotion(req, res) {
-    res.end('working...');
-  }
+  upsertPromotion(req, res) {
+    let id = +req.params['id'];
+    let data = req.body;
+    if (!data) {
+      return res.status(400).json({
+        status: 400,
+        data: {}
+      })
+    }
 
-  updatePromotion(req, res) {
-    res.end('working...');
+    let isUpdate = model.setPromotion(id, data);
+    console.log('prpomo', model.promotions);
+    return res.status(200).json({
+      status: 200,
+      data: {
+        isUpdate: isUpdate
+      }
+    })
+
+
   }
 }
 
