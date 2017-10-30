@@ -5,7 +5,7 @@
 
 import { extendObservable } from 'mobx';
 import fetch from 'isomorphic-fetch';
-const PORT = 3001; // todo: make this one configurable
+const PORT = 3000; // 3001 for server API todo: make this one configurable
 
 const API_URL = `http://localhost:${PORT}/api`;
 class StoreService {
